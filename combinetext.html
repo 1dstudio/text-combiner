@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Combiner</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px auto;
+      max-width: 1024px;
+    }
+
+    #drop-area {
+      border: 2px dashed #0078D7;
+      border-radius: 10px;
+      padding: 20px;
+      width: 80%;
+      margin: 0 auto;
+      background-color: #f9f9f9;
+      color: #555;
+      cursor: pointer;
+    }
+
+    #drop-area:hover {
+      background-color: #e8f4ff;
+    }
+
+    #file-list {
+      margin-top: 10px;
+      text-align: left;
+      max-width: 80%;
+      margin: 10px auto;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f4f4f4;
+      overflow-y: auto;
+      max-height: 150px;
+      font-size: 14px;
+    }
+
+    #output {
+      width: 80%;
+      height: 300px;
+      margin: 20px auto;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f4f4f4;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 5px;
+      background-color: #0078D7;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #005cbf;
+    }
+
+    .description {
+      font-size: 16px;
+      color: #444;
+      max-width: 80%;
+      margin: 20px auto;
+      text-align: left;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Text Combiner</h1>
+  <p class="description">
+    This tool lets you combine the content of text-based files (like code files) into one block of text.
+    It runs completely in your browser, so nothing is uploaded or saved. You can use this to prepare
+    text for copying into tools like ChatGPT, Claude, or Gemini.
+  </p>
+  <p>Drop your files below or click to upload. Only text-readable files are supported.</p>
+  <div id="drop-area">Drop files here or click to upload</div>
+  <div id="file-list">No files added yet.</div>
+  <button id="combine-button">Combine Text</button>
+  <button id="clear-button">Clear</button>
+  <textarea id="output" placeholder="Combined text will appear here..." readonly></textarea>
+
+  <script>
+    const dropArea = document.getElementById("drop-area");
+    const combineButton = document.getElementById("combine-button");
+    const clearButton = document.getElementById("clear-button");
+    const fileListDiv = document.getElementById("file-list");
+    const output = document.getElementById("output");
+    let fileContents = [];
+    let fileNames = [];
+
+    // Handle drag-and-drop functionality
+    dropArea.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      dropArea.style.backgroundColor = "#e8f4ff";
+    });
+
+    dropArea.addEventListener("dragleave", () => {
+      dropArea.style.backgroundColor = "#f9f9f9";
+    });
+
+    dropArea.addEventListener("drop", (event) => {
+      event.preventDefault();
+      dropArea.style.backgroundColor = "#f9f9f9";
+      handleFiles(event.dataTransfer.files);
+    });
+
+    // Handle click to upload files
+    dropArea.addEventListener("click", () => {
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.multiple = true;
+      fileInput.accept = "*/*";
+      fileInput.onchange = () => handleFiles(fileInput.files);
+      fileInput.click();
+    });
+
+    // Read files and store their contents
+    function handleFiles(files) {
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (!fileNames.includes(file.name)) {
+            fileContents.push(`--- Start of ${file.name} ---\n\n${e.target.result}\n\n--- End of ${file.name} ---`);
+            fileNames.push(file.name);
+            updateFileList();
+          }
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    // Update the file list display
+    function updateFileList() {
+      if (fileNames.length === 0) {
+        fileListDiv.innerHTML = "No files added yet.";
+      } else {
+        fileListDiv.innerHTML = `<strong>Files Added:</strong><ul>${fileNames
+          .map((name) => `<li>${name}</li>`)
+          .join("")}</ul>`;
+      }
+    }
+
+    // Combine text and display in the output textarea
+    combineButton.addEventListener("click", () => {
+      output.value = fileContents.join("\n");
+    });
+
+    // Clear files and reset everything
+    clearButton.addEventListener("click", () => {
+      fileContents = [];
+      fileNames = [];
+      updateFileList();
+      output.value = "";
+    });
+  </script>
+</body>
+
+</html>
