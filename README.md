@@ -10,6 +10,7 @@ Features:
 	•	Ideal for preparing multiple files for use with large language models (LLMs) like ChatGPT, Claude, or Gemini.
 
 How to Use:
+
 	1.	Open the HTML file in your browser.
 	2.	Drag and drop files into the drop area or click to upload.
 	3.	View the combined content and copy it to your clipboard.
