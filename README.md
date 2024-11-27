@@ -2,6 +2,8 @@
 This is a lightweight HTML tool that combines the content of multiple text-based files (like code files) into one block of text.
 
 Features:
+
+
 	•	100% runs in your browser—no uploads, no data saved.
 	•	Supports drag-and-drop or file selection for easy file input.
 	•	Displays a list of uploaded files and their combined content in a single, copy-paste-ready text area.
